@@ -15,7 +15,15 @@ const io = new Server(expressServer, {
 })
 
 io.on('connection', (socket) => {
-    console.log(`USER ${socket.id} connected`)
 
-    
+    io.emit('msg', `USER:  ${socket.id}`)
+
+    socket.on('msg', (message) => {
+        io.emit('msg', `USER:  ${socket.id} : ${message}`)
+    })
+
+    socket.on('disconnect', () => {
+        io.emit('msg', `USER:  ${socket.id} Disconnected`)
+    })
+
 })
