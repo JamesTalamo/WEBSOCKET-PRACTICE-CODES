@@ -7,15 +7,28 @@ function App() {
   let [messages, setMessages] = useState("");
   let [msg, setMsg] = useState([]);
 
-  useEffect(() => {
-    socket.on("message", (data) => {
+  let [rooms, setRooms] = useState([])
 
-      console.log(data)
-      setMsg((prev) => [...prev, data]);
+  useEffect(() => {
+    socket.on('message', (message) => {
+      console.log('New Message:', message); // Debugging log
+      setMsg((prevMsgs) => [...prevMsgs, message]); // Append new message to state
     });
 
     return () => {
-      socket.off("message");
+      socket.off('message'); // Cleanup listener
+    };
+  }, []);
+
+
+  useEffect(() => {
+    socket.on('rooms', (roomList) => {
+      console.log('Rooms:', roomList);
+      setRooms(roomList); // Assuming you have `const [rooms, setRooms] = useState([])`
+    });
+
+    return () => {
+      socket.off('rooms');
     };
   }, []);
 
@@ -42,11 +55,11 @@ function App() {
     <div className="w-[100vw] h-[100vh] bg-gray-900 flex items-center justify-center">
       <div className="w-[80%] h-[80%] bg-gray-700 rounded-3xl flex flex-col lg:flex-row items-center justify-around">
         {/* Sidebar */}
-        <div className="w-[100%] lg:w-[30%] h-[90%] flex rounded-3xl flex items-center justify-start flex-col">
+        <div className="w-[100%] lg:w-[30%] h-[80%] flex rounded-3xl flex items-center justify-start flex-col">
           <text className="p-3 font-bold text-white text-3xl">CHATROOMS</text>
           <form
             onSubmit={handleSubmit}
-            className="w-[100%] h-[100%] flex rounded-3xl flex items-center justify-start flex-col"
+            className="w-[100%] h-[80%] flex rounded-3xl flex items-center justify-start flex-col"
           >
             <input
               value={name}
@@ -68,6 +81,16 @@ function App() {
               JOIN ROOM
             </button>
           </form>
+          <div className='font-bold text-3xl text-white'>ROOMS</div>
+          <div className='bg-gray-900 w-[100%] h-[100%] rounded-3xl flex items-start justify-center flex-wrap p-3 gap-1'>
+
+            <div className='bg-gray-900 w-[100%] h-[100%] rounded-3xl flex items-start justify-center flex-wrap p-3 gap-1'>
+              {rooms.map((room, index) => (
+                <div key={index} className="badge badge-ghost">{room}</div>
+              ))}
+            </div>
+
+          </div>
         </div>
 
         {/* Chat Section */}
