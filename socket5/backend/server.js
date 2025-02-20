@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
                         console.log(`Room ${room} deleted due to inactivity.`);
                         
                     }
-                }, 35000);
+                }, 30000);
             }
         }
     });
